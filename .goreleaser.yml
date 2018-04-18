@@ -1,0 +1,34 @@
+builds:
+  - binary: tweets
+    ldflags: -s -w -X main.version={{.Version}}
+    goos:
+      - linux
+    goarch:
+      - amd64
+      - arm
+    goarm:
+      - 7
+    env:
+      - CGO_ENABLED=0
+
+dockers:
+  - 
+    binary: tweets
+    image: quay.io/selfidrone/tweets
+    goos: linux
+    goarch: amd64
+    dockerfile: Dockerfile
+    tag_templates: 
+      - "{{ .Tag }}"
+      - latest
+  - 
+    binary: tweets
+    image: quay.io/selfidrone/tweets
+    goos: linux
+    goarch: arm
+    goarm: 7
+    dockerfile: Dockerfile
+    tag_templates: 
+      - "arm7-{{ .Tag }}"
+      - "arm7-{{ .Version }}"
+
