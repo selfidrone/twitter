@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 
@@ -40,19 +41,24 @@ func NewTweet(c TwitterPoster) *Tweet {
 
 // ServeHTTP a serverless request
 func (th *Tweet) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+	log.Println("New Tweet")
+
 	data, err := ioutil.ReadAll(r.Body)
 	if err != nil {
+		log.Println("Bad Request")
 		http.Error(rw, "Bad Request", http.StatusBadRequest)
 		return
 	}
 
 	req, err := marshalRequest(data)
 	if err != nil {
+		log.Println("Bad Request")
 		createResponse(rw, http.StatusBadRequest, "Invalid request message")
 		return
 	}
 
 	if req.Text == "" {
+		log.Println("Empty message")
 		createResponse(rw, http.StatusBadRequest, "Empty message")
 		return
 	}
@@ -63,6 +69,7 @@ func (th *Tweet) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	if req.Image != "" {
 		media, err := th.twitterClient.UploadMedia(req.Image)
 		if err != nil {
+			log.Println("unable to upload")
 			createResponse(
 				rw,
 				http.StatusInternalServerError,
@@ -81,9 +88,11 @@ func (th *Tweet) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 			http.StatusInternalServerError,
 			fmt.Sprintf("Tweet failed to send: %s", err),
 		)
+		log.Println("failed to send")
 		return
 	}
 
+	log.Println("Tweet sent")
 	createResponse(rw, http.StatusOK, "Tweet sent")
 }
 
