@@ -45,14 +45,14 @@ func (th *Tweet) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 
 	data, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		log.Println("Bad Request")
+		log.Println("Bad Request", err)
 		http.Error(rw, "Bad Request", http.StatusBadRequest)
 		return
 	}
 
 	req, err := marshalRequest(data)
 	if err != nil {
-		log.Println("Bad Request")
+		log.Println("Bad Request", err)
 		createResponse(rw, http.StatusBadRequest, "Invalid request message")
 		return
 	}
@@ -69,7 +69,7 @@ func (th *Tweet) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	if req.Image != "" {
 		media, err := th.twitterClient.UploadMedia(req.Image)
 		if err != nil {
-			log.Println("unable to upload")
+			log.Println("unable to upload", err)
 			createResponse(
 				rw,
 				http.StatusInternalServerError,
@@ -88,7 +88,7 @@ func (th *Tweet) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 			http.StatusInternalServerError,
 			fmt.Sprintf("Tweet failed to send: %s", err),
 		)
-		log.Println("failed to send")
+		log.Println("failed to send", err)
 		return
 	}
 
