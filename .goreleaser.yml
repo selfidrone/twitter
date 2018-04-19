@@ -27,7 +27,7 @@ dockers:
     goos: linux
     goarch: arm
     goarm: 7
-    dockerfile: Dockerfile
+    dockerfile: Dockerfile.arm7
     tag_templates: 
       - "arm7-{{ .Tag }}"
       - "arm7-{{ .Version }}"
